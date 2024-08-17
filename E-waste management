@@ -1,0 +1,79 @@
+import datetime
+
+# Class to represent an electronic item
+class ElectronicItem:
+    def __init__(self, name, purchase_date, lifespan_years):
+        self.name = name
+        self.purchase_date = purchase_date
+        self.lifespan_years = lifespan_years
+        self.disposal_date = self.calculate_disposal_date()
+        
+    def calculate_disposal_date(self):
+        return self.purchase_date + datetime.timedelta(days=self.lifespan_years * 365)
+    
+    def is_due_for_replacement(self):
+        return datetime.datetime.now() >= self.disposal_date
+    
+    def __str__(self):
+        return f"{self.name} | Purchased on: {self.purchase_date.date()} | Disposal Date: {self.disposal_date.date()}"
+
+# Class to manage the E-Waste Monitoring System
+class EWasteMonitoringSystem:
+    def __init__(self):
+        self.items = []
+        
+    def add_item(self, name, purchase_date, lifespan_years):
+        item = ElectronicItem(name, purchase_date, lifespan_years)
+        self.items.append(item)
+        print(f"Item '{name}' added successfully.")
+        
+    def check_items_for_replacement(self):
+        print("\nItems due for replacement:")
+        due_items = [item for item in self.items if item.is_due_for_replacement()]
+        if not due_items:
+            print("No items are due for replacement.")
+        else:
+            for item in due_items:
+                print(item)
+    
+    def generate_report(self):
+        print("\nE-Waste Monitoring Report")
+        print("=================================")
+        for item in self.items:
+            print(item)
+
+# Console-based user interface
+def main():
+    system = EWasteMonitoringSystem()
+    
+    while True:
+        print("\nE-Waste Monitoring System")
+        print("1. Add a new electronic item")
+        print("2. Check items for replacement")
+        print("3. Generate report")
+        print("4. Exit")
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            name = input("Enter the name of the electronic item: ")
+            purchase_date_str = input("Enter the purchase date (YYYY-MM-DD): ")
+            lifespan_years = int(input("Enter the lifespan of the item in years: "))
+
+            purchase_date = datetime.datetime.strptime(purchase_date_str, "%Y-%m-%d")
+            system.add_item(name, purchase_date, lifespan_years)
+        
+        elif choice == "2":
+            system.check_items_for_replacement()
+        
+        elif choice == "3":
+            system.generate_report()
+        
+        elif choice == "4":
+            print("Exiting the system. Goodbye!")
+            break
+        
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
